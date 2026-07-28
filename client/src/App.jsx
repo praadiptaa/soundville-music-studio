@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
+import PageTransitionLoader from './components/ui/PageTransitionLoader'
 
 // Public Pages
 import Home          from './pages/Home'
@@ -65,7 +66,9 @@ const AdminRoute = ({ children }) => {
  */
 function App() {
   return (
-    <Routes>
+    <>
+      <PageTransitionLoader />
+      <Routes>
       {/* Public */}
       <Route path="/"                  element={<Home />} />
       <Route path="/login"             element={<Login />} />
@@ -98,6 +101,7 @@ function App() {
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+    </>
   )
 }
 
