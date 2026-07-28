@@ -79,7 +79,7 @@ class EventModel {
               e.id_package, e.lokasi_event, e.deskripsi, e.status_event,
               e.catatan_admin, e.catatan_cancel, e.jumlah_hari,
               e.paket_biaya_adjusted, e.tanggal_mulai_paket, e.tanggal_selesai_paket,
-              e.created_at, e.updated_at,
+              e.created_at,
               ep.nama_paket,
               pay.status_payment AS status_payment, pay.tipe_pembayaran, pay.metode,
               SUM(eo.total_harga) AS total_biaya
@@ -92,7 +92,7 @@ class EventModel {
                 e.id_package, e.lokasi_event, e.deskripsi, e.status_event,
                 e.catatan_admin, e.catatan_cancel, e.jumlah_hari,
                 e.paket_biaya_adjusted, e.tanggal_mulai_paket, e.tanggal_selesai_paket,
-                e.created_at, e.updated_at,
+                e.created_at,
                 ep.nama_paket, pay.status_payment, pay.tipe_pembayaran, pay.metode
        ORDER BY e.created_at DESC`,
       [id_user]
