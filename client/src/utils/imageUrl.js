@@ -33,4 +33,35 @@ export const getImagePath = (filePath) => {
   return `/${filePath}`
 }
 
+/**
+ * Safely open image (HTTP URL or Base64 Data URL) in a new tab
+ * Prevents 414 Request-URI Too Large error on web servers when clicking Base64 data URIs
+ */
+export const openImageInNewTab = (src) => {
+  if (!src) return
+  if (src.startsWith('data:')) {
+    const newWindow = window.open('')
+    if (newWindow) {
+      newWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Bukti Transfer - Soundville Music Studio</title>
+            <style>
+              body { margin: 0; background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: system-ui, sans-serif; }
+              img { max-width: 95vw; max-height: 95vh; object-fit: contain; border-radius: 12px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
+            </style>
+          </head>
+          <body>
+            <img src="${src}" alt="Bukti Transfer" />
+          </body>
+        </html>
+      `)
+      newWindow.document.close()
+    }
+  } else {
+    window.open(src, '_blank', 'noopener,noreferrer')
+  }
+}
+
 export default getImageUrl

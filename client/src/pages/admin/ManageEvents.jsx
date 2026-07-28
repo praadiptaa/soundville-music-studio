@@ -15,11 +15,7 @@ const STATUS_FILTERS = ['all','pending','approved','rejected','completed','cance
 const formatRupiah = (n) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n || 0)
 
-const getImageUrl = (path) => {
-  if (!path) return null
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  return path.startsWith('/') ? path : `/${path}`
-}
+import { getImageUrl, openImageInNewTab } from '../../utils/imageUrl'
 
 // ─── Modal Reject ────────────────────────────────────────────────────────────
 function RejectEventModal({ event, onConfirm, onCancel, isLoading }) {
@@ -64,6 +60,7 @@ function RejectEventModal({ event, onConfirm, onCancel, isLoading }) {
 
 // Modal pratinjau bukti transfer
 function ImagePreviewModal({ src, onClose }) {
+  if (!src) return null
   return (
     <div
       className="fixed inset-0 bg-black/80 z-[70] flex items-center justify-center p-4"
@@ -73,15 +70,15 @@ function ImagePreviewModal({ src, onClose }) {
         <div className="flex justify-between items-center mb-3">
           <p className="text-white font-medium">Bukti Transfer</p>
           <div className="flex gap-2">
-            <a
-              href={src}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => openImageInNewTab(src)}
               className="flex items-center gap-1 text-primary-400 hover:text-primary-300 text-sm"
             >
               <FaExternalLinkAlt /> Buka di tab baru
-            </a>
+            </button>
             <button
+              type="button"
               onClick={onClose}
               className="text-gray-400 hover:text-white text-sm px-3 py-1 bg-dark-700 rounded-lg"
             >
@@ -102,7 +99,7 @@ function ImagePreviewModal({ src, onClose }) {
           <div
             className="hidden items-center justify-center h-40 bg-dark-700 rounded-xl text-gray-400 text-sm"
           >
-            Gagal memuat gambar. <a href={src} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary-400 underline">Coba buka langsung</a>
+            Gagal memuat gambar. <button type="button" onClick={() => openImageInNewTab(src)} className="ml-1 text-primary-400 underline">Coba buka langsung</button>
           </div>
         </div>
       </div>
@@ -409,14 +406,13 @@ function EventDetailModal({ eventId, onClose, onAction, isProcessing }) {
                           >
                             <FaImage /> Lihat Penuh
                           </button>
-                          <a
-                            href={getImageUrl(payment.bukti_transfer)}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                          <button
+                            type="button"
+                            onClick={() => openImageInNewTab(getImageUrl(payment.bukti_transfer))}
                             className="flex items-center gap-1 text-xs text-gray-400 hover:text-white"
                           >
                             <FaExternalLinkAlt /> Buka di Tab Baru
-                          </a>
+                          </button>
                         </div>
                       </div>
                     )}

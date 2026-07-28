@@ -14,13 +14,7 @@ const formatRupiah = (n) =>
 
 // URL helper – konversi path relatif uploads ke URL yang bisa diakses browser
 // Vite dev server sudah proxy /uploads → http://localhost:5000/uploads
-const getImageUrl = (path) => {
-  if (!path) return null
-  // Jika sudah absolute URL, gunakan langsung
-  if (path.startsWith('http://') || path.startsWith('https://')) return path
-  // Pastikan ada leading slash
-  return path.startsWith('/') ? path : `/${path}`
-}
+import { getImageUrl, openImageInNewTab } from '../../utils/imageUrl'
 
 // Modal untuk reject pembayaran dengan catatan
 function RejectPaymentModal({ payment, onConfirm, onCancel, isLoading }) {
@@ -77,6 +71,7 @@ function RejectPaymentModal({ payment, onConfirm, onCancel, isLoading }) {
 
 // Modal pratinjau bukti transfer
 function ImagePreviewModal({ src, onClose }) {
+  if (!src) return null
   return (
     <div
       className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
@@ -86,15 +81,15 @@ function ImagePreviewModal({ src, onClose }) {
         <div className="flex justify-between items-center mb-3">
           <p className="text-white font-medium">Bukti Transfer</p>
           <div className="flex gap-2">
-            <a
-              href={src}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={() => openImageInNewTab(src)}
               className="flex items-center gap-1 text-primary-400 hover:text-primary-300 text-sm"
             >
               <FaExternalLinkAlt /> Buka di tab baru
-            </a>
+            </button>
             <button
+              type="button"
               onClick={onClose}
               className="text-gray-400 hover:text-white text-sm px-3 py-1 bg-dark-700 rounded-lg"
             >
@@ -115,7 +110,7 @@ function ImagePreviewModal({ src, onClose }) {
           <div
             className="hidden items-center justify-center h-40 bg-dark-700 rounded-xl text-gray-400 text-sm"
           >
-            Gagal memuat gambar. <a href={src} target="_blank" rel="noopener noreferrer" className="ml-1 text-primary-400 underline">Coba buka langsung</a>
+            Gagal memuat gambar. <button type="button" onClick={() => openImageInNewTab(src)} className="ml-1 text-primary-400 underline">Coba buka langsung</button>
           </div>
         </div>
       </div>
