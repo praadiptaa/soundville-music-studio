@@ -96,7 +96,7 @@ class PaymentModel {
    */
   static async updateProof(id, bukti_transfer, tipe_pembayaran) {
     const [result] = await db.query(
-      'UPDATE payments SET status_payment = "pending", catatan_admin = NULL, bukti_transfer = ?, tipe_pembayaran = ? WHERE id_payment = ?',
+      "UPDATE payments SET status_payment = 'pending', catatan_admin = NULL, bukti_transfer = ?, tipe_pembayaran = ? WHERE id_payment = ?",
       [bukti_transfer, tipe_pembayaran || 'dp', id]
     );
     return result.affectedRows;

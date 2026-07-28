@@ -121,7 +121,7 @@ class EventPaymentModel {
    */
   static async updateProof(id, bukti_transfer, jumlah_bayar, tipe_pembayaran) {
     const [result] = await db.query(
-      'UPDATE event_payments SET status_payment = "pending", catatan_admin = NULL, bukti_transfer = ?, jumlah_bayar = ?, tipe_pembayaran = ? WHERE id_event_payment = ?',
+      "UPDATE event_payments SET status_payment = 'pending', catatan_admin = NULL, bukti_transfer = ?, jumlah_bayar = ?, tipe_pembayaran = ? WHERE id_event_payment = ?",
       [bukti_transfer, jumlah_bayar || null, tipe_pembayaran || 'dp', id]
     );
     return result.affectedRows;

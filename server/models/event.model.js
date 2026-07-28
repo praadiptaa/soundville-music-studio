@@ -12,14 +12,14 @@ class EventModel {
       `SELECT e.*, u.nama AS nama_customer, u.email,
               ep.nama_paket,
               pay.status_payment AS status_payment, pay.tipe_pembayaran, pay.metode,
-              GROUP_CONCAT(es.nama_service ORDER BY es.nama_service SEPARATOR ', ') AS services
+              STRING_AGG(es.nama_service, ', ' ORDER BY es.nama_service) AS services
        FROM events e
        JOIN users u ON e.id_user = u.id_user
        LEFT JOIN event_packages ep ON e.id_package = ep.id_package
        LEFT JOIN event_payments pay ON e.id_event = pay.id_event
        LEFT JOIN event_orders eo ON e.id_event = eo.id_event
        LEFT JOIN event_services es ON eo.id_service = es.id_service
-       GROUP BY e.id_event, pay.status_payment, pay.tipe_pembayaran, pay.metode
+       GROUP BY e.id_event, u.nama, u.email, ep.nama_paket, pay.status_payment, pay.tipe_pembayaran, pay.metode
        ORDER BY e.created_at DESC`
     );
     return rows;
@@ -75,7 +75,11 @@ class EventModel {
    */
   static async findByUserId(id_user) {
     const [rows] = await db.query(
-      `SELECT e.*,
+      `SELECT e.id_event, e.id_user, e.nama_event, e.tanggal_event, e.tanggal_selesai,
+              e.id_package, e.lokasi_event, e.deskripsi, e.status_event,
+              e.catatan_admin, e.catatan_cancel, e.jumlah_hari,
+              e.paket_biaya_adjusted, e.tanggal_mulai_paket, e.tanggal_selesai_paket,
+              e.created_at, e.updated_at,
               ep.nama_paket,
               pay.status_payment AS status_payment, pay.tipe_pembayaran, pay.metode,
               SUM(eo.total_harga) AS total_biaya
@@ -84,7 +88,12 @@ class EventModel {
        LEFT JOIN event_payments pay ON e.id_event = pay.id_event
        LEFT JOIN event_orders eo ON e.id_event = eo.id_event
        WHERE e.id_user = ?
-       GROUP BY e.id_event, pay.status_payment, pay.tipe_pembayaran, pay.metode
+       GROUP BY e.id_event, e.id_user, e.nama_event, e.tanggal_event, e.tanggal_selesai,
+                e.id_package, e.lokasi_event, e.deskripsi, e.status_event,
+                e.catatan_admin, e.catatan_cancel, e.jumlah_hari,
+                e.paket_biaya_adjusted, e.tanggal_mulai_paket, e.tanggal_selesai_paket,
+                e.created_at, e.updated_at,
+                ep.nama_paket, pay.status_payment, pay.tipe_pembayaran, pay.metode
        ORDER BY e.created_at DESC`,
       [id_user]
     );

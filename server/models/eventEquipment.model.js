@@ -9,7 +9,7 @@ class EventEquipmentModel {
    */
   static async findAll() {
     const [rows] = await db.query(
-      'SELECT * FROM event_equipment WHERE status = "aktif" ORDER BY nama_alat' // Filter hanya yang aktif, sort by name
+      "SELECT * FROM event_equipment WHERE status = 'aktif' ORDER BY nama_alat" // Filter hanya yang aktif, sort by name
     );
     return rows;
   }
