@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
   FaTachometerAlt, FaBuilding, FaCalendarCheck,
-  FaMoneyBillWave, FaStar, FaUsers, FaChartBar, FaSignOutAlt, FaTools, FaClock
+  FaMoneyBillWave, FaStar, FaUsers, FaChartBar, FaSignOutAlt, FaTools, FaClock, FaTimes
 } from 'react-icons/fa'
 
 const baseNavItems = [
@@ -18,7 +18,7 @@ const baseNavItems = [
   { to: '/admin/reports',          icon: <FaChartBar />,      label: 'Laporan', adminOnly: true },
 ]
 
-export default function Sidebar() {
+export default function Sidebar({ isOpen, onClose }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
@@ -27,66 +27,88 @@ export default function Sidebar() {
     navigate('/login')
   }
 
-  // Filter menu berdasarkan role (Sembunyikan laporan jika role operator)
   const navItems = baseNavItems.filter(item => {
     if (item.adminOnly && user?.role !== 'admin') return false
     return true
   })
 
   return (
-    <aside className="w-64 min-h-screen bg-dark-800 border-r border-dark-700 flex flex-col">
-      {/* Logo */}
-      <div className="px-6 py-5 border-b border-dark-700">
-        <div className="flex items-center gap-3">
-          <img src="/logo.png" alt="Soundville" className="h-10 object-contain" />
-          <div>
-            <p className="text-xs text-primary-400 font-semibold uppercase tracking-wider">
-              {user?.role === 'operator' ? 'Operator Panel' : 'Admin Panel'}
-            </p>
-          </div>
-        </div>
-      </div>
+    <>
+      {/* Mobile Backdrop Overlay */}
+      {isOpen && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 lg:hidden transition-opacity"
+        />
+      )}
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {navItems.map(item => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.end}
-            className={({ isActive }) =>
-              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary-400/20 text-primary-300 border border-primary-400/30'
-                  : 'text-gray-400 hover:text-white hover:bg-dark-700'
-              }`
-            }
+      {/* Sidebar Drawer */}
+      <aside
+        className={`fixed lg:static top-0 bottom-0 left-0 z-50 w-64 bg-dark-800 border-r border-dark-700 flex flex-col transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
+      >
+        {/* Logo Header */}
+        <div className="px-6 py-5 border-b border-dark-700 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <img src="/logo.png" alt="Soundville" className="h-9 object-contain" />
+            <div>
+              <p className="text-xs text-primary-400 font-semibold uppercase tracking-wider">
+                {user?.role === 'operator' ? 'Operator Panel' : 'Admin Panel'}
+              </p>
+            </div>
+          </div>
+          {/* Close button on mobile */}
+          <button
+            onClick={onClose}
+            className="lg:hidden text-gray-400 hover:text-white p-1 rounded-lg hover:bg-dark-700"
           >
-            <span className="text-base">{item.icon}</span>
-            {item.label}
-          </NavLink>
-        ))}
-      </nav>
-
-      {/* User info + logout */}
-      <div className="px-4 py-4 border-t border-dark-700">
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 bg-primary-400 rounded-full flex items-center justify-center text-xs font-bold text-dark-900">
-            {user?.nama?.charAt(0).toUpperCase()}
-          </div>
-          <div className="overflow-hidden">
-            <p className="text-sm font-medium text-white truncate">{user?.nama}</p>
-            <p className="text-xs text-gray-500 capitalize truncate">{user?.role || 'staff'} • {user?.email}</p>
-          </div>
+            <FaTimes className="text-lg" />
+          </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-accent-500 hover:bg-accent-500/10 rounded-lg transition-colors"
-        >
-          <FaSignOutAlt />
-          Logout
-        </button>
-      </div>
-    </aside>
+
+        {/* Navigation Items */}
+        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+          {navItems.map(item => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              end={item.end}
+              onClick={onClose}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                  isActive
+                    ? 'bg-primary-400/20 text-primary-300 border border-primary-400/30 font-semibold shadow-sm'
+                    : 'text-gray-400 hover:text-white hover:bg-dark-700'
+                }`
+              }
+            >
+              <span className="text-base">{item.icon}</span>
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        {/* User Info & Logout */}
+        <div className="px-4 py-4 border-t border-dark-700 bg-dark-800/90">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-8 h-8 bg-primary-400 rounded-full flex items-center justify-center text-xs font-bold text-dark-900 shadow-sm">
+              {user?.nama?.charAt(0).toUpperCase()}
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-medium text-white truncate">{user?.nama}</p>
+              <p className="text-xs text-gray-500 capitalize truncate">{user?.role || 'staff'} • {user?.email}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-accent-500 hover:bg-accent-500/10 rounded-lg transition-colors"
+          >
+            <FaSignOutAlt />
+            Logout
+          </button>
+        </div>
+      </aside>
+    </>
   )
 }
