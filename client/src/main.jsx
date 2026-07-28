@@ -1,0 +1,33 @@
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
+import App from './App.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
+import './index.css'
+
+/**
+ * @module client/main
+ * @description Entry point utama untuk React client application. Menginisialisasi React DOM,
+ * membungkus dengan BrowserRouter untuk routing, AuthProvider untuk user session, dan Toaster untuk notifikasi toast.
+ */
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            style: {
+              background: '#1a1a1a',
+              color: '#fff',
+              border: '1px solid #3a3a3a',
+            },
+          }}
+        />
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+)

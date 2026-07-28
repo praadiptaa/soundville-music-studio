@@ -1,0 +1,36 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="shadow">
+      <feDropShadow dx="1" dy="1" stdDeviation="2" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- Yellow background with rounded corners -->
+  <rect width="200" height="200" fill="#FCD34D" rx="45"/>
+  
+  <!-- Inner dark circle bottom -->
+  <circle cx="100" cy="140" r="35" fill="#DC2626" opacity="0.15" filter="url(#shadow)"/>
+  
+  <!-- Music note 1 -->
+  <g filter="url(#shadow)">
+    <!-- Head 1 -->
+    <circle cx="70" cy="125" r="12" fill="#DC2626"/>
+    <!-- Stem 1 -->
+    <rect x="80" y="40" width="4" height="85" fill="#DC2626"/>
+  </g>
+  
+  <!-- Music note 2 -->
+  <g filter="url(#shadow)">
+    <!-- Head 2 -->
+    <circle cx="115" cy="110" r="12" fill="#DC2626"/>
+    <!-- Stem 2 -->
+    <rect x="125" y="25" width="4" height="85" fill="#DC2626"/>
+    <!-- Connecting beam -->
+    <path d="M 84 40 L 129 25 L 129 31 L 84 46 Z" fill="#DC2626"/>
+  </g>
+  
+  <!-- Soundville text -->
+  <text x="100" y="165" font-family="Arial, sans-serif" font-size="14" font-weight="bold" text-anchor="middle" fill="#DC2626" letter-spacing="1">
+    SV
+  </text>
+</svg>
