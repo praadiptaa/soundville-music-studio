@@ -249,12 +249,12 @@ const updateBookingStatus = async (req, res) => {
 const getSchedule = async (req, res) => {
   try {
     const { id_studio, tanggal } = req.query;
-    if (!id_studio || !tanggal) {
-      return res.status(400).json({ success: false, message: 'id_studio dan tanggal wajib diisi.' });
+    if (!tanggal) {
+      return res.status(400).json({ success: false, message: 'tanggal wajib diisi.' });
     }
-    // Normalize tanggal ke format YYYY-MM-DD (ambil bagian tanggal aja, tanpa konversi timezone)
+    // Normalize tanggal ke format YYYY-MM-DD
     const normalizedDate = tanggal.split('T')[0]
-    const schedule = await BookingModel.getScheduleByStudioAndDate(id_studio, normalizedDate);
+    const schedule = await BookingModel.getScheduleByStudioAndDate(id_studio || null, normalizedDate);
     res.json({ success: true, data: schedule });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
@@ -263,27 +263,14 @@ const getSchedule = async (req, res) => {
 
 /**
  * Ambil jadwal booking seluruh bulan (untuk calendar view bulanan)
- * @async
- * @route GET /api/bookings/schedule/month
- * @param {Object} req - Express request object
- * @param {Object} req.query - Query parameters
- * @param {number} req.query.id_studio - Studio ID
- * @param {number} req.query.year - Tahun (YYYY format)
- * @param {number} req.query.month - Bulan (1-12)
- * @param {Object} res - Express response object
- * @returns {200} Jadwal seluruh bulan
- * @returns {Array} Array of bookings dalam bulan tersebut
- * @throws {400} Jika id_studio, year, atau month kosong
- * @throws {500} Server error
- * @public
  */
 const getScheduleByMonth = async (req, res) => {
   try {
     const { id_studio, year, month } = req.query;
-    if (!id_studio || !year || !month) {
-      return res.status(400).json({ success: false, message: 'id_studio, year, dan month wajib diisi.' });
+    if (!year || !month) {
+      return res.status(400).json({ success: false, message: 'year dan month wajib diisi.' });
     }
-    const schedule = await BookingModel.getScheduleByStudioAndMonth(id_studio, year, month);
+    const schedule = await BookingModel.getScheduleByStudioAndMonth(id_studio || null, year, month);
     res.json({ success: true, data: schedule });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
