@@ -161,8 +161,9 @@ CREATE TABLE IF NOT EXISTS event_rentals (
 CREATE TABLE IF NOT EXISTS event_payments (
   id_event_payment SERIAL PRIMARY KEY,
   id_event         INT           NOT NULL UNIQUE REFERENCES events(id_event) ON DELETE CASCADE,
-  metode           VARCHAR(50)   NOT NULL DEFAULT 'transfer',
-  bukti_transfer   VARCHAR(255)  DEFAULT NULL,
+  metode           VARCHAR(50)   DEFAULT NULL,
+  bukti_transfer   TEXT          DEFAULT NULL,
+  jumlah_bayar     DECIMAL(12,2) DEFAULT NULL,
   status_payment   status_payment_type NOT NULL DEFAULT 'pending',
   tanggal_payment  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
   catatan_admin    TEXT          DEFAULT NULL,
