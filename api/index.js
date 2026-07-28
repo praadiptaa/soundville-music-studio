@@ -52,6 +52,7 @@ const eventSvcRoutes  = require('../server/routes/eventService.routes');
 const eventPaymentRoutes = require('../server/routes/eventPayment.routes');
 const userRoutes      = require('../server/routes/user.routes');
 const reportRoutes    = require('../server/routes/report.routes');
+const operatorShiftRoutes = require('../server/routes/operatorShift.routes');
 
 // Register routes
 app.use('/api/auth',            authRoutes);
@@ -65,6 +66,7 @@ app.use('/api/event-services',  eventSvcRoutes);
 app.use('/api/event-payments',  eventPaymentRoutes);
 app.use('/api/users',           userRoutes);
 app.use('/api/reports',         reportRoutes);
+app.use('/api/shifts',          operatorShiftRoutes);
 
 // Error handler
 app.use((err, req, res, next) => {
