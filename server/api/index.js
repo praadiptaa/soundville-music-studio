@@ -31,8 +31,14 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Health check endpoint (Dipasang di paling atas agar fast response & 100% reliable)
+app.get(['/', '/api', '/api/health'], (req, res) => {
+  res.status(200).json({ success: true, message: 'Soundville Music Studio API is running on Vercel' });
+});
+
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Import routes
 const authRoutes      = require('../routes/auth.routes');
 const studioRoutes    = require('../routes/studio.routes');
 const bookingRoutes   = require('../routes/booking.routes');
@@ -45,6 +51,7 @@ const eventPaymentRoutes = require('../routes/eventPayment.routes');
 const userRoutes      = require('../routes/user.routes');
 const reportRoutes    = require('../routes/report.routes');
 
+// Register routes
 app.use('/api/auth',            authRoutes);
 app.use('/api/studios',         studioRoutes);
 app.use('/api/bookings',        bookingRoutes);
@@ -56,10 +63,6 @@ app.use('/api/event-services',  eventSvcRoutes);
 app.use('/api/event-payments',  eventPaymentRoutes);
 app.use('/api/users',           userRoutes);
 app.use('/api/reports',         reportRoutes);
-
-app.get(['/', '/api'], (req, res) => {
-  res.json({ success: true, message: 'Soundville Music Studio API is running on Vercel' });
-});
 
 app.use((err, req, res, next) => {
   console.error('Vercel Express Error:', err);
