@@ -69,21 +69,28 @@ const fs = require('fs');
  * - Implement automatic cleanup untuk old images
  */
 
+const isVercel = process.env.VERCEL || process.env.NOW_REGION;
+const baseUploadDir = isVercel ? '/tmp' : path.join(__dirname, '..', 'uploads');
+
 /**
- * Create upload directory dengan recursive option
+ * Create upload directory dengan recursive option (aman di Vercel)
  * @param {string} dir - Directory path
  */
 const createUploadDir = (dir) => {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+  try {
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+  } catch (e) {
+    // Filesystem read-only (misalnya di Vercel), lanjutkan tanpa membuat folder
   }
 };
 
 // Define directory paths untuk berbagai tipe uploads
-const studioDir = path.join(__dirname, '..', 'uploads', 'studios');
-const equipmentDir = path.join(__dirname, '..', 'uploads', 'equipment');
-const bookingsDir = path.join(__dirname, '..', 'uploads', 'bookings');
-const packagesDir = path.join(__dirname, '..', 'uploads', 'packages');
+const studioDir    = path.join(baseUploadDir, 'studios');
+const equipmentDir = path.join(baseUploadDir, 'equipment');
+const bookingsDir  = path.join(baseUploadDir, 'bookings');
+const packagesDir  = path.join(baseUploadDir, 'packages');
 
 // Create directories jika belum ada
 createUploadDir(studioDir);

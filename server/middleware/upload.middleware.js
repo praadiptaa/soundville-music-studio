@@ -60,10 +60,17 @@ const fs = require('fs');
  * - Add file cleanup task (delete old files > 30 days)
  */
 
-// Buat folder uploads jika belum ada
-const uploadDir = path.join(__dirname, '..', 'uploads', 'payments');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+// Di Vercel (read-only FS), gunakan /tmp — di server lokal gunakan uploads/payments
+const isVercel = process.env.VERCEL || process.env.NOW_REGION;
+const uploadDir = isVercel
+  ? path.join('/tmp', 'payments')
+  : path.join(__dirname, '..', 'uploads', 'payments');
+try {
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+} catch (e) {
+  // Filesystem read-only (misalnya di Vercel), lanjutkan tanpa membuat folder
 }
 
 /**
