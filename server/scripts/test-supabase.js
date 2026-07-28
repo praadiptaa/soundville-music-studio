@@ -1,19 +1,18 @@
 const { Pool } = require('pg');
 
-const connectionString = 'postgresql://postgres:smsbugenvil2025@db.kmhqsuzeuekgbpzumkno.supabase.co:5432/postgres';
+const poolerUrl = 'postgresql://postgres.kmhqsuzeuekgbpzumkno:smsbugenvil2025@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres';
 
 const pool = new Pool({
-  connectionString,
+  connectionString: poolerUrl,
   ssl: { rejectUnauthorized: false }
 });
 
 async function testConnection() {
   try {
-    console.log('Menghubungkan ke Supabase PostgreSQL...');
+    console.log('Menghubungkan ke Supabase Pooler (ap-northeast-2)...');
     const client = await pool.connect();
-    console.log('✅ Berhasil terhubung ke Supabase!');
+    console.log('✅ BERHASIL TERHUBUNG KE SUPABASE POSTGRESQL!');
 
-    // Cek daftar tabel
     const res = await client.query(`
       SELECT table_name 
       FROM information_schema.tables 
@@ -22,16 +21,12 @@ async function testConnection() {
     `);
 
     console.log('\nTabel yang ditemukan di Supabase:');
-    if (res.rows.length === 0) {
-      console.log('⚠️ Belum ada tabel. Pastikan Anda sudah me-run script supabase_schema.sql di SQL Editor Supabase!');
-    } else {
-      res.rows.forEach(r => console.log('  - ' + r.table_name));
-    }
+    res.rows.forEach(r => console.log('  - ' + r.table_name));
 
     client.release();
     process.exit(0);
   } catch (err) {
-    console.error('❌ Error koneksi ke Supabase:', err.message);
+    console.error('❌ Error koneksi:', err.message);
     process.exit(1);
   }
 }

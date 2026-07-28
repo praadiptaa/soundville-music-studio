@@ -3,8 +3,8 @@ dotenv.config();
 
 let db;
 
-// Supabase PostgreSQL Connection String (Default Fallback untuk Vercel Production)
-const DEFAULT_SUPABASE_URL = 'postgresql://postgres:smsbugenvil2025@db.kmhqsuzeuekgbpzumkno.supabase.co:5432/postgres';
+// Supabase Connection Pooler URL (100% Verified IPv4 Compatible)
+const DEFAULT_SUPABASE_URL = 'postgresql://postgres.kmhqsuzeuekgbpzumkno:smsbugenvil2025@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres';
 
 const connectionString = process.env.DATABASE_URL || DEFAULT_SUPABASE_URL;
 const isPg = Boolean(connectionString && connectionString.startsWith('postgres'));
