@@ -420,12 +420,12 @@ const updateEventPaymentStatus = async (req, res) => {
 
     if (existingPayment.length > 0) {
       await db.query(
-        'UPDATE event_payments SET status_payment = ?, metode = ?, tipe_pembayaran = "full_payment", jumlah_bayar = ? WHERE id_event = ?',
+        "UPDATE event_payments SET status_payment = ?, metode = ?, tipe_pembayaran = 'full_payment', jumlah_bayar = ? WHERE id_event = ?",
         [status_payment, metode, grandTotal, id_event]
       );
     } else {
       await db.query(
-        'INSERT INTO event_payments (id_event, metode, status_payment, tipe_pembayaran, jumlah_bayar) VALUES (?, ?, ?, "full_payment", ?)',
+        "INSERT INTO event_payments (id_event, metode, status_payment, tipe_pembayaran, jumlah_bayar) VALUES (?, ?, ?, 'full_payment', ?)",
         [id_event, metode, status_payment, grandTotal]
       );
     }
