@@ -3,24 +3,17 @@ dotenv.config();
 
 let db;
 
-// Deteksi apakah menggunakan Supabase PostgreSQL (via DATABASE_URL atau DB_TYPE=postgres)
-if (process.env.DATABASE_URL || process.env.DB_TYPE === 'postgres') {
+// Deteksi apakah menggunakan Supabase PostgreSQL (via DATABASE_URL atau VERCEL)
+if (process.env.DATABASE_URL || process.env.DB_TYPE === 'postgres' || process.env.VERCEL) {
   const { Pool } = require('pg');
   const connectionString = process.env.DATABASE_URL;
   
   const pool = new Pool({
     connectionString,
-    ssl: process.env.DB_SSL === 'false' ? false : { rejectUnauthorized: false }
-  });
-
-  // Test koneksi
-  pool.connect((err, client, release) => {
-    if (err) {
-      console.error('❌ Gagal koneksi ke Supabase PostgreSQL:', err.message);
-    } else {
-      console.log('✅ Koneksi database Supabase PostgreSQL berhasil!');
-      release();
-    }
+    ssl: process.env.DB_SSL === 'false' ? false : { rejectUnauthorized: false },
+    max: 10,
+    idleTimeoutMillis: 30000,
+    connectionTimeoutMillis: 10000,
   });
 
   // Wrapper agar interface `db.query(sql, params)` kompatibel dengan MySQL promise API
