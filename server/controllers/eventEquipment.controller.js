@@ -1,4 +1,5 @@
 const EventEquipmentModel = require('../models/eventEquipment.model');
+const { uploadToSupabase } = require('../middleware/supabase-upload.middleware');
 
 /**
  * GET /api/event-equipment
@@ -531,8 +532,9 @@ const uploadGambar = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Alat tidak ditemukan' });
     }
 
-    const filePath = `equipment/${req.file.filename}`;
-    await EventEquipmentModel.uploadGambar(id, filePath);
+    // Upload ke Supabase Storage (bukan disk lokal)
+    const publicUrl = await uploadToSupabase(req.file.buffer, 'equipment', req.file.originalname);
+    await EventEquipmentModel.uploadGambar(id, publicUrl);
     const updated = await EventEquipmentModel.findById(id);
     res.json({ success: true, message: 'Gambar berhasil diunggah', data: updated });
   } catch (err) {

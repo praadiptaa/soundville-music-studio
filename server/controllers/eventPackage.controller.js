@@ -1,4 +1,5 @@
 const EventPackageModel = require('../models/eventPackage.model')
+const { uploadToSupabase } = require('../middleware/supabase-upload.middleware')
 
 /**
  * GET /api/event-packages
@@ -387,8 +388,9 @@ const uploadGambar = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Paket tidak ditemukan' })
     }
 
-    const filePath = `packages/${req.file.filename}`
-    await EventPackageModel.uploadGambar(id, filePath)
+    // Upload ke Supabase Storage (bukan disk lokal)
+    const publicUrl = await uploadToSupabase(req.file.buffer, 'packages', req.file.originalname)
+    await EventPackageModel.uploadGambar(id, publicUrl)
     const updated = await EventPackageModel.findById(id)
     res.json({ success: true, message: 'Gambar berhasil diunggah', data: updated })
   } catch (err) {

@@ -8,7 +8,7 @@
 const router = require('express').Router(); // Express router
 const { uploadPayment, getAllPayments, getPaymentById, getPaymentByBookingId, verifyPayment } = require('../controllers/payment.controller'); // Import payment controller functions
 const { verifyToken, isAdmin } = require('../middleware/auth.middleware'); // Import auth middleware
-const upload = require('../middleware/upload.middleware'); // Import file upload middleware
+const { uploadPayment: upload } = require('../middleware/supabase-upload.middleware'); // Import Supabase upload middleware
 
 /**
  * @route POST /api/payments

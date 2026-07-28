@@ -15,7 +15,7 @@ const { // Import event payment controller functions
   updateEventPaymentStatus,
 } = require('../controllers/eventPayment.controller');
 const { verifyToken, isAdmin } = require('../middleware/auth.middleware'); // Import auth middleware
-const upload = require('../middleware/upload.middleware'); // Import file upload middleware
+const { uploadPayment: upload } = require('../middleware/supabase-upload.middleware'); // Import Supabase upload middleware
 
 /**
  * @route POST /api/event-payments

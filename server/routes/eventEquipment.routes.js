@@ -7,7 +7,7 @@
  */
 const router = require('express').Router(); // Express router
 const { verifyToken, isAdmin } = require('../middleware/auth.middleware'); // Import auth middleware
-const { uploadEquipment } = require('../middleware/image-upload.middleware'); // Import upload middleware
+const { uploadEquipment } = require('../middleware/supabase-upload.middleware'); // Import Supabase upload middleware
 const equipmentController = require('../controllers/eventEquipment.controller'); // Import equipment controller functions
 
 // --- PUBLIC ROUTES (Tidak perlu login) ---

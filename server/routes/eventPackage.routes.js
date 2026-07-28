@@ -7,7 +7,7 @@
  */
 const express = require('express') // Express framework
 const router = express.Router() // Express router
-const { uploadPackage } = require('../middleware/image-upload.middleware') // Import upload middleware
+const { uploadPackage } = require('../middleware/supabase-upload.middleware') // Import Supabase upload middleware
 const { getAll, getById, create, update, deletePackage, uploadGambar } = require('../controllers/eventPackage.controller') // Import event package controller functions
 const { verifyToken, isAdmin } = require('../middleware/auth.middleware') // Import auth middleware
 

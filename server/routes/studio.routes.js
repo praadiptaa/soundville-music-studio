@@ -8,7 +8,7 @@
 const router = require('express').Router(); // Express router
 const { getAllStudios, getStudioById, createStudio, updateStudio, deleteStudio, uploadGambar } = require('../controllers/studio.controller'); // Import studio controller functions
 const { verifyToken, isAdmin } = require('../middleware/auth.middleware'); // Import auth middleware
-const { uploadStudio } = require('../middleware/image-upload.middleware'); // Import upload middleware
+const { uploadStudio } = require('../middleware/supabase-upload.middleware'); // Import Supabase upload middleware
 
 // GET /api/studios - Ambil semua studio (public)
 /**
