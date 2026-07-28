@@ -21,7 +21,7 @@ DO $$ BEGIN
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
-    CREATE TYPE tipe_pembayaran_type AS ENUM ('dp', 'lunas');
+    CREATE TYPE tipe_pembayaran_type AS ENUM ('dp', 'lunas', 'full_payment');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
