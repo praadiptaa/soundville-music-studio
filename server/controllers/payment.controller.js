@@ -1,5 +1,6 @@
 const PaymentModel  = require('../models/payment.model');
 const BookingModel  = require('../models/booking.model');
+const { uploadToSupabase } = require('../middleware/supabase-upload.middleware');
 
 /**
  * Upload bukti transfer pembayaran booking
@@ -113,7 +114,7 @@ const uploadPayment = async (req, res) => {
           });
         }
 
-        const bukti_transfer = `uploads/payments/${req.file.filename}`;
+        const bukti_transfer = await uploadToSupabase(req.file.buffer, 'payments', req.file.originalname, 'soundville-payments');
         await PaymentModel.updateProof(existing.id_payment, bukti_transfer, tipe_pembayaran);
         return res.status(200).json({
           success: true,
@@ -127,7 +128,7 @@ const uploadPayment = async (req, res) => {
         if (!req.file) {
           return res.status(400).json({ success: false, message: 'Bukti transfer pelunasan wajib diupload.' });
         }
-        const bukti_transfer = `uploads/payments/${req.file.filename}`;
+        const bukti_transfer = await uploadToSupabase(req.file.buffer, 'payments', req.file.originalname, 'soundville-payments');
         // Update tipe_pembayaran ke 'lunas' dan status_payment ke 'pending' agar admin verifikasi pelunasannya
         await PaymentModel.updateProof(existing.id_payment, bukti_transfer, 'lunas');
         return res.status(200).json({
@@ -144,7 +145,7 @@ const uploadPayment = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Bukti transfer wajib diupload.' });
     }
 
-    const bukti_transfer = `uploads/payments/${req.file.filename}`;
+    const bukti_transfer = await uploadToSupabase(req.file.buffer, 'payments', req.file.originalname, 'soundville-payments');
     // Jangan simpan metode saat upload - metode baru di-set saat admin mark as "Lunas"
     const id_payment = await PaymentModel.create({ id_booking, metode: null, bukti_transfer, tipe_pembayaran });
 

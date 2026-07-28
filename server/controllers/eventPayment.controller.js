@@ -1,5 +1,6 @@
 const EventPaymentModel = require('../models/eventPayment.model');
 const EventModel = require('../models/event.model');
+const { uploadToSupabase } = require('../middleware/supabase-upload.middleware');
 
 /**
  * Upload bukti transfer pembayaran event
@@ -105,7 +106,7 @@ const uploadEventPayment = async (req, res) => {
         if (!req.file) {
           return res.status(400).json({ success: false, message: 'Bukti transfer pelunasan wajib diupload.' });
         }
-        const bukti_transfer = `uploads/payments/${req.file.filename}`;
+        const bukti_transfer = await uploadToSupabase(req.file.buffer, 'payments', req.file.originalname, 'soundville-payments');
         // Update tipe_pembayaran ke 'full_payment' (lunas) dan status_payment ke 'pending' agar admin verifikasi pelunasannya
         await EventPaymentModel.updateProof(existing.id_event_payment, bukti_transfer, grandTotal, 'full_payment');
         return res.status(200).json({
@@ -123,7 +124,7 @@ const uploadEventPayment = async (req, res) => {
         const tipe = tipe_pembayaran || existing.tipe_pembayaran || 'dp';
         const jumlah_bayar = grandTotal > 0 ? (tipe === 'full_payment' ? grandTotal : Math.round(grandTotal * 0.5)) : null;
 
-        const bukti_transfer = `uploads/payments/${req.file.filename}`;
+        const bukti_transfer = await uploadToSupabase(req.file.buffer, 'payments', req.file.originalname, 'soundville-payments');
         await EventPaymentModel.updateProof(existing.id_event_payment, bukti_transfer, jumlah_bayar, tipe);
         return res.status(200).json({
           success: true,
@@ -146,7 +147,7 @@ const uploadEventPayment = async (req, res) => {
     const tipe = tipe_pembayaran || 'dp';
     const jumlah_bayar = grandTotal > 0 ? (tipe === 'full_payment' ? grandTotal : Math.round(grandTotal * 0.5)) : null;
 
-    const bukti_transfer = `uploads/payments/${req.file.filename}`;
+    const bukti_transfer = await uploadToSupabase(req.file.buffer, 'payments', req.file.originalname, 'soundville-payments');
     const id_event_payment = await EventPaymentModel.create({
       id_event,
       metode: null,
