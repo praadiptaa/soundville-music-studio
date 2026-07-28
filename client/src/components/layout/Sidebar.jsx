@@ -2,10 +2,10 @@ import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import {
   FaTachometerAlt, FaBuilding, FaCalendarCheck,
-  FaMoneyBillWave, FaStar, FaUsers, FaChartBar, FaSignOutAlt, FaTools,
+  FaMoneyBillWave, FaStar, FaUsers, FaChartBar, FaSignOutAlt, FaTools, FaClock
 } from 'react-icons/fa'
 
-const navItems = [
+const baseNavItems = [
   { to: '/admin',                  icon: <FaTachometerAlt />, label: 'Dashboard',       end: true },
   { to: '/admin/studios',          icon: <FaBuilding />,      label: 'Studio' },
   { to: '/admin/event-packages',   icon: <FaStar />,          label: 'Paket Event' },
@@ -13,20 +13,11 @@ const navItems = [
   { to: '/admin/bookings',         icon: <FaCalendarCheck />, label: 'Booking' },
   { to: '/admin/payments',         icon: <FaMoneyBillWave />, label: 'Pembayaran' },
   { to: '/admin/events',           icon: <FaStar />,          label: 'Event Request' },
+  { to: '/admin/shifts',           icon: <FaClock />,          label: 'Shift Operator' },
   { to: '/admin/users',            icon: <FaUsers />,         label: 'Pengguna' },
-  { to: '/admin/reports',          icon: <FaChartBar />,      label: 'Laporan' },
+  { to: '/admin/reports',          icon: <FaChartBar />,      label: 'Laporan', adminOnly: true },
 ]
 
-/**
- * Component Sidebar Panel Admin
- * 
- * @description
- * Navigasi samping khusus untuk panel admin yang berisi menu pengelolaan studio,
- * paket, booking, pembayaran, event, user, dan laporan.
- * 
- * @component
- * @returns {React.ReactElement} Sidebar element
- */
 export default function Sidebar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -36,6 +27,12 @@ export default function Sidebar() {
     navigate('/login')
   }
 
+  // Filter menu berdasarkan role (Sembunyikan laporan jika role operator)
+  const navItems = baseNavItems.filter(item => {
+    if (item.adminOnly && user?.role !== 'admin') return false
+    return true
+  })
+
   return (
     <aside className="w-64 min-h-screen bg-dark-800 border-r border-dark-700 flex flex-col">
       {/* Logo */}
@@ -43,7 +40,9 @@ export default function Sidebar() {
         <div className="flex items-center gap-3">
           <img src="/logo.png" alt="Soundville" className="h-10 object-contain" />
           <div>
-            <p className="text-xs text-gray-500">Admin Panel</p>
+            <p className="text-xs text-primary-400 font-semibold uppercase tracking-wider">
+              {user?.role === 'operator' ? 'Operator Panel' : 'Admin Panel'}
+            </p>
           </div>
         </div>
       </div>
@@ -77,7 +76,7 @@ export default function Sidebar() {
           </div>
           <div className="overflow-hidden">
             <p className="text-sm font-medium text-white truncate">{user?.nama}</p>
-            <p className="text-xs text-gray-500 truncate">{user?.email}</p>
+            <p className="text-xs text-gray-500 capitalize truncate">{user?.role || 'staff'} • {user?.email}</p>
           </div>
         </div>
         <button

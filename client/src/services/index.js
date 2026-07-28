@@ -489,11 +489,31 @@ export const userService = {
   update:  (id, data)    => api.put(`/users/${id}`, data),
 
   /**
+   * Update role user (Admin saja)
+   * @param {number} id - ID User
+   * @param {string} role - Role baru ('admin', 'operator', 'customer')
+   * @returns {Promise<Object>} Hasil update
+   */
+  updateRole: (id, role) => api.put(`/users/${id}/role`, { role }),
+
+  /**
    * Hapus user (Admin)
    * @param {number} id - ID User
    * @returns {Promise<Object>} Status hapus
    */
   delete:  (id)          => api.delete(`/users/${id}`),
+}
+
+/**
+ * @module services/operatorShift
+ * @description Service untuk manajemen shift & absensi operator studio
+ */
+export const operatorShiftService = {
+  getAll: (params) => api.get('/shifts', { params }),
+  getWaReminder: (params) => api.get('/shifts/reminder', { params }),
+  create: (data) => api.post('/shifts', data),
+  updateStatus: (id, data) => api.put(`/shifts/${id}`, data),
+  delete: (id) => api.delete(`/shifts/${id}`),
 }
 
 /**

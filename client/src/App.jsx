@@ -27,18 +27,11 @@ import ManageEvents          from './pages/admin/ManageEvents'
 import ManageEventPackages   from './pages/admin/ManageEventPackages'
 import ManageEventEquipment  from './pages/admin/ManageEventEquipment'
 import ManageUsers           from './pages/admin/ManageUsers'
+import ManageShifts          from './pages/admin/ManageShifts'
 import Reports               from './pages/admin/Reports'
 
 /**
- * @module client/App
- * @description Root component untuk client app yang mengatur routing utama dan route guards (Private & Admin)
- */
-
-/**
  * Route guard untuk halaman khusus Customer
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Halaman tujuan
- * @returns {React.ReactElement} Halaman jika authorized, atau redirect ke login
  */
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth()
@@ -47,16 +40,24 @@ const PrivateRoute = ({ children }) => {
 }
 
 /**
- * Route guard untuk halaman khusus Admin
- * @param {Object} props - Component props
- * @param {React.ReactNode} props.children - Halaman tujuan
- * @returns {React.ReactElement} Halaman jika authorized, atau redirect ke login/dashboard
+ * Route guard untuk halaman khusus Staff (Admin & Operator)
  */
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth()
   if (loading) return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-400" /></div>
   if (!user) return <Navigate to="/login" replace />
-  if (user.role !== 'admin') return <Navigate to="/dashboard" replace />
+  if (!['admin', 'operator'].includes(user.role)) return <Navigate to="/dashboard" replace />
+  return children
+}
+
+/**
+ * Route guard khusus Administrator saja
+ */
+const AdminOnlyRoute = ({ children }) => {
+  const { user, loading } = useAuth()
+  if (loading) return <div className="flex items-center justify-center h-screen"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary-400" /></div>
+  if (!user) return <Navigate to="/login" replace />
+  if (user.role !== 'admin') return <Navigate to="/admin" replace />
   return children
 }
 
@@ -96,7 +97,8 @@ function App() {
       <Route path="/admin/event-packages"     element={<AdminRoute><ManageEventPackages /></AdminRoute>} />
       <Route path="/admin/event-equipment"    element={<AdminRoute><ManageEventEquipment /></AdminRoute>} />
       <Route path="/admin/users"              element={<AdminRoute><ManageUsers /></AdminRoute>} />
-      <Route path="/admin/reports"            element={<AdminRoute><Reports /></AdminRoute>} />
+      <Route path="/admin/shifts"             element={<AdminRoute><ManageShifts /></AdminRoute>} />
+      <Route path="/admin/reports"            element={<AdminOnlyRoute><Reports /></AdminOnlyRoute>} />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

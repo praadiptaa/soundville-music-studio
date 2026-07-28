@@ -5,7 +5,7 @@
 
 -- 1. Tipe Enum (Kategori / Status)
 DO $$ BEGIN
-    CREATE TYPE role_type AS ENUM ('admin', 'customer');
+    CREATE TYPE role_type AS ENUM ('admin', 'customer', 'operator');
 EXCEPTION WHEN duplicate_object THEN null; END $$;
 
 DO $$ BEGIN
@@ -168,6 +168,18 @@ CREATE TABLE IF NOT EXISTS event_payments (
   tanggal_payment  TIMESTAMP     DEFAULT CURRENT_TIMESTAMP,
   catatan_admin    TEXT          DEFAULT NULL,
   tipe_pembayaran  tipe_pembayaran_type NOT NULL DEFAULT 'dp'
+);
+
+-- 14. Tabel Operator Shifts
+CREATE TABLE IF NOT EXISTS operator_shifts (
+  id_shift        SERIAL PRIMARY KEY,
+  id_user         INT           NOT NULL REFERENCES users(id_user) ON DELETE CASCADE,
+  tanggal         DATE          NOT NULL,
+  jam_mulai       TIME          NOT NULL,
+  jam_selesai     TIME          NOT NULL,
+  status_shift    VARCHAR(50)   DEFAULT 'scheduled',
+  catatan         TEXT          DEFAULT NULL,
+  created_at      TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================================

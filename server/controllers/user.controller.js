@@ -284,4 +284,26 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { getAllUsers, getUserById, updateUser, deleteUser };
+/**
+ * Update role user (admin only)
+ */
+const updateUserRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    const targetId = req.params.id;
+
+    const validRoles = ['admin', 'operator', 'customer'];
+    if (!validRoles.includes(role)) {
+      return res.status(400).json({ success: false, message: 'Role tidak valid.' });
+    }
+
+    const affected = await UserModel.updateRole(targetId, role);
+    if (!affected) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
+
+    res.json({ success: true, message: `Role user berhasil diubah menjadi "${role}".` });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = { getAllUsers, getUserById, updateUser, deleteUser, updateUserRole };

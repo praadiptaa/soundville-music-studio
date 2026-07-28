@@ -95,6 +95,17 @@ class UserModel {
   }
 
   /**
+   * Memperbarui role user (admin / operator / customer)
+   */
+  static async updateRole(id, role) {
+    const [result] = await db.query(
+      'UPDATE users SET role = ? WHERE id_user = ?',
+      [role, id]
+    );
+    return result.affectedRows;
+  }
+
+  /**
    * Menghapus data user dari database berdasarkan ID
    * @async
    * @param {number} id - ID user

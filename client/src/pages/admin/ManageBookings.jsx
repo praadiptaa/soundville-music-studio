@@ -3,9 +3,10 @@ import { useSearchParams } from 'react-router-dom'
 import AdminLayout from '../../components/layout/AdminLayout'
 import StatusBadge from '../../components/ui/StatusBadge'
 import LoadingSpinner from '../../components/ui/LoadingSpinner'
-import { bookingService } from '../../services'
+import { bookingService, operatorShiftService } from '../../services'
+import { sendOperatorWaReminder } from '../../utils/whatsappHelper'
 import toast from 'react-hot-toast'
-import { FaSearch, FaMoneyBill } from 'react-icons/fa'
+import { FaSearch, FaMoneyBill, FaWhatsapp } from 'react-icons/fa'
 
 const formatRupiah = (n) =>
   new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n)
@@ -192,31 +193,52 @@ export default function ManageBookings() {
                         <td className="px-4 py-3"><StatusBadge status={b.status_booking} /></td>
                         <td className="px-4 py-3 text-gray-300 capitalize">{b.metode || '–'}</td>
                         <td className="px-4 py-3">
-                          {(() => {
-                            console.log(`[DEBUG] Aksi row ${b.id_booking}:`, { status_booking: b.status_booking, status_payment: b.status_payment, metode: b.metode, hasMetode: !!b.metode });
-                            
-                            // Hanya tampilkan tombol jika status confirmed dan payment verified
-                            if (b.status_booking !== 'confirmed' || b.status_payment !== 'verified') {
-                              return <span className="text-gray-500 text-xs">-</span>;
-                            }
-                            
-                            // Jika ada metode, tampil "Sudah lunas"
-                            if (b.metode && b.metode.trim()) {
-                              return <span className="text-green-400 text-xs font-medium">✓ Sudah lunas</span>;
-                            }
-                            
-                            // Jika tidak ada metode, tampil tombol "Lunas"
-                            return (
-                              <button 
-                                onClick={() => {
-                                  console.log('[DEBUG] Lunas button clicked', { id_booking: b.id_booking });
-                                  setLunasModal({ show: true, booking: b });
-                                }}
-                                className="btn-primary text-xs py-1 px-2 flex items-center gap-1 bg-green-600 hover:bg-green-700 whitespace-nowrap">
-                                <FaMoneyBill /> Lunas
-                              </button>
-                            );
-                          })()}
+                          <div className="flex flex-col gap-1 items-start">
+                            {(() => {
+                              if (b.status_booking !== 'confirmed' || b.status_payment !== 'verified') {
+                                return <span className="text-gray-500 text-xs">-</span>;
+                              }
+                              if (b.metode && b.metode.trim()) {
+                                return <span className="text-green-400 text-xs font-medium">✓ Sudah lunas</span>;
+                              }
+                              return (
+                                <button 
+                                  onClick={() => {
+                                    setLunasModal({ show: true, booking: b });
+                                  }}
+                                  className="btn-primary text-xs py-1 px-2 flex items-center gap-1 bg-green-600 hover:bg-green-700 whitespace-nowrap">
+                                  <FaMoneyBill /> Lunas
+                                </button>
+                              );
+                            })()}
+                            <button
+                              onClick={() => {
+                                operatorShiftService.getWaReminder({
+                                  tanggal: b.tanggal,
+                                  jam_mulai: b.jam_mulai,
+                                  nama_studio: b.nama_studio,
+                                  nama_customer: b.nama_customer
+                                }).then(res => {
+                                  if (res.data?.success && res.data.data) {
+                                    const op = res.data.data;
+                                    sendOperatorWaReminder({
+                                      phone: op.no_hp,
+                                      operatorName: op.nama_operator,
+                                      customerName: b.nama_customer,
+                                      studioName: b.nama_studio,
+                                      date: b.tanggal,
+                                      startTime: b.jam_mulai?.substring(0, 5),
+                                      endTime: b.jam_selesai?.substring(0, 5)
+                                    });
+                                  }
+                                }).catch(() => toast.error('Gagal mengambil info operator piket.'));
+                              }}
+                              title="Kirim pesan WA ke Operator yang piket saat booking ini"
+                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[11px] font-medium flex items-center gap-1 mt-1 transition-colors"
+                            >
+                              <FaWhatsapp /> Ingatkan WA
+                            </button>
+                          </div>
                         </td>
                       </tr>
                       {((b.status_booking === 'rejected' && b.catatan_admin) || (b.status_booking === 'cancelled' && b.catatan_cancel)) && (

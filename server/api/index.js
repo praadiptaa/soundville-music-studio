@@ -50,6 +50,7 @@ const eventSvcRoutes  = require('../routes/eventService.routes');
 const eventPaymentRoutes = require('../routes/eventPayment.routes');
 const userRoutes      = require('../routes/user.routes');
 const reportRoutes    = require('../routes/report.routes');
+const operatorShiftRoutes = require('../routes/operatorShift.routes');
 
 // Register routes
 app.use('/api/auth',            authRoutes);
@@ -63,6 +64,7 @@ app.use('/api/event-services',  eventSvcRoutes);
 app.use('/api/event-payments',  eventPaymentRoutes);
 app.use('/api/users',           userRoutes);
 app.use('/api/reports',         reportRoutes);
+app.use('/api/shifts',          operatorShiftRoutes);
 
 app.use((err, req, res, next) => {
   console.error('Vercel Express Error:', err);
