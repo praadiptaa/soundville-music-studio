@@ -69,8 +69,8 @@ app.use('/api/users',           userRoutes); // Prefix /api/users untuk user rou
 app.use('/api/reports',         reportRoutes); // Prefix /api/reports untuk report routes
 
 // Health check endpoint - untuk verifikasi server berjalan
-app.get('/', (req, res) => {
-  res.json({ message: 'Soundville Music Studio API is running' });
+app.get(['/', '/api'], (req, res) => {
+  res.json({ success: true, message: 'Soundville Music Studio API is running' });
 });
 
 // Global error handler middleware - menangani semua error di aplikasi

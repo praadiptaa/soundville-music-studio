@@ -27,7 +27,7 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token dengan secret key
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'soundville_jwt_secret_key_2024'); // Verify token dengan secret key
     req.user = decoded; // Simpan decoded token data di req.user
     next(); // Lanjut ke middleware/controller berikutnya
   } catch (err) {

@@ -13,8 +13,8 @@ const UserModel = require('../models/user.model');
 const generateToken = (user) => {
   return jwt.sign(
     { id_user: user.id_user, email: user.email, role: user.role, nama: user.nama },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN }
+    process.env.JWT_SECRET || 'soundville_jwt_secret_key_2024',
+    { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
 };
 
