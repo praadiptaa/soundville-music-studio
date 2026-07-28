@@ -21,7 +21,7 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(schema) })
 
   if (user) {
-    navigate(user.role === 'admin' ? '/admin' : '/dashboard')
+    navigate(['admin', 'operator'].includes(user.role) ? '/admin' : '/dashboard')
     return null
   }
 
@@ -31,7 +31,7 @@ export default function Login() {
       const { data } = await authService.login(values)
       login(data.data.user, data.data.token)
       toast.success(`Selamat datang, ${data.data.user.nama}!`)
-      navigate(data.data.user.role === 'admin' ? '/admin' : '/dashboard')
+      navigate(['admin', 'operator'].includes(data.data.user.role) ? '/admin' : '/dashboard')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Login gagal')
     } finally {

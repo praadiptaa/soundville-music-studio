@@ -60,9 +60,9 @@ export default function Navbar() {
             
             {user ? (
               <>
-                {user.role === 'admin' ? (
+                {['admin', 'operator'].includes(user.role) ? (
                   <Link to="/admin" className="text-gray-300 hover:text-primary-300 transition-colors text-sm font-medium relative group">
-                    Dashboard Admin
+                    {user.role === 'operator' ? 'Panel Operator' : 'Dashboard Admin'}
                     <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-primary-400 to-accent-600 group-hover:w-full transition-all" />
                   </Link>
                 ) : (
@@ -144,8 +144,10 @@ export default function Navbar() {
             
             {user ? (
               <>
-                {user.role === 'admin' ? (
-                  <Link to="/admin" className="block text-gray-300 hover:text-white text-sm" onClick={() => setOpen(false)}>Dashboard Admin</Link>
+                {['admin', 'operator'].includes(user.role) ? (
+                  <Link to="/admin" className="block text-gray-300 hover:text-white text-sm" onClick={() => setOpen(false)}>
+                    {user.role === 'operator' ? 'Panel Operator' : 'Dashboard Admin'}
+                  </Link>
                 ) : (
                   <>
                     {/* Mobile Booking Menu */}

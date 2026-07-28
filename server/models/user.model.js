@@ -70,12 +70,19 @@ class UserModel {
    * @param {string} data.no_hp - Nomor telepon user
    * @returns {Promise<number>} Jumlah baris yang terpengaruh (affectedRows)
    */
-  static async update(id, { nama, email, no_hp }) {
+  static async update(id, { nama, email, no_hp, role }) {
+    if (role) {
+      const [result] = await db.query(
+        'UPDATE users SET nama = ?, email = ?, no_hp = ?, role = ? WHERE id_user = ?',
+        [nama, email, no_hp, role, id]
+      );
+      return result.affectedRows;
+    }
     const [result] = await db.query(
       'UPDATE users SET nama = ?, email = ?, no_hp = ? WHERE id_user = ?',
       [nama, email, no_hp, id]
     );
-    return result.affectedRows; // Return jumlah baris yang ter-update
+    return result.affectedRows;
   }
 
   /**

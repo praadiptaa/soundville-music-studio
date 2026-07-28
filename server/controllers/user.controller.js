@@ -205,7 +205,7 @@ const getUserById = async (req, res) => {
  */
 const updateUser = async (req, res) => {
   try {
-    const { nama, email, no_hp } = req.body;
+    const { nama, email, no_hp, role } = req.body;
     const targetId = req.params.id;
 
     // Customer hanya boleh edit profil sendiri
@@ -213,7 +213,10 @@ const updateUser = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Akses ditolak.' });
     }
 
-    const affected = await UserModel.update(targetId, { nama, email, no_hp });
+    // Role hanya bisa diubah jika request dikirim oleh Admin
+    const roleToUpdate = req.user.role === 'admin' ? role : undefined;
+
+    const affected = await UserModel.update(targetId, { nama, email, no_hp, role: roleToUpdate });
     if (!affected) return res.status(404).json({ success: false, message: 'User tidak ditemukan.' });
 
     const user = await UserModel.findById(targetId);
