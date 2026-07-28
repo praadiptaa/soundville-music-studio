@@ -6,7 +6,13 @@ let db;
 // Supabase Connection Pooler URL (100% Verified IPv4 Compatible)
 const DEFAULT_SUPABASE_URL = 'postgresql://postgres.kmhqsuzeuekgbpzumkno:smsbugenvil2025@aws-1-ap-northeast-2.pooler.supabase.com:6543/postgres';
 
-const connectionString = process.env.DATABASE_URL || DEFAULT_SUPABASE_URL;
+let connectionString = process.env.DATABASE_URL || DEFAULT_SUPABASE_URL;
+
+// Auto-fix: jika env DATABASE_URL masih menyimpan domain lama db.kmhqsuzeuekgbpzumkno.supabase.co, otomatis ganti ke Pooler IPv4 URL yang valid
+if (connectionString.includes('db.kmhqsuzeuekgbpzumkno.supabase.co')) {
+  connectionString = DEFAULT_SUPABASE_URL;
+}
+
 const isPg = Boolean(connectionString && connectionString.startsWith('postgres'));
 
 if (isPg || process.env.DB_TYPE === 'postgres' || process.env.VERCEL) {
