@@ -17,7 +17,7 @@ export const formatPhoneNumber = (phone) => {
 }
 
 /**
- * Buat link WhatsApp API (wa.me) dengan pesan pengingat booking studio
+ * Buat link WhatsApp API (wa.me) dengan pesan pengingat booking studio lengkap
  */
 export const createOperatorWaReminderUrl = ({
   phone,
@@ -26,11 +26,38 @@ export const createOperatorWaReminderUrl = ({
   studioName = 'Studio Soundville',
   date = '',
   startTime = '',
-  endTime = ''
+  endTime = '',
+  paymentStatus = '',
+  paymentType = ''
 }) => {
   const formattedPhone = formatPhoneNumber(phone)
-  const message = `Halo ${operatorName}, pesan dari Admin Soundville Studio 🎵:\n\nAda booking studio baru dari *${customerName}* untuk *${studioName}* pada tanggal *${date}* (Jam *${startTime} - ${endTime}*).\n\nMohon untuk segera standby di studio ya. Terima kasih! 🙏`
-  
+
+  // Penentuan teks status pembayaran (DP vs Lunas)
+  let statusText = '💳 DP (Uang Muka)'
+  if (
+    paymentType === 'lunas' ||
+    paymentType === 'full_payment' ||
+    paymentStatus === 'verified' ||
+    paymentStatus === 'lunas'
+  ) {
+    statusText = '✅ LUNAS (Full Payment)'
+  } else if (paymentType === 'dp') {
+    statusText = '💳 DP (Uang Muka)'
+  } else if (paymentStatus) {
+    statusText = paymentStatus.toUpperCase()
+  }
+
+  const message = `Halo *${operatorName}*, pengingat jadwal dari Admin Soundville Studio 🎵:
+
+📌 *INFORMASI BOOKING STUDIO*
+👤 *Customer*: ${customerName}
+🎸 *Pilihan Studio*: ${studioName}
+📅 *Tanggal*: ${date}
+⏰ *Jam Standby*: ${startTime} - ${endTime} WIB
+💰 *Status Pembayaran*: ${statusText}
+
+Mohon untuk segera hadir dan standby di studio Soundville tepat waktu ya. Terima kasih! 🙏`
+
   const encodedText = encodeURIComponent(message)
   return formattedPhone
     ? `https://wa.me/${formattedPhone}?text=${encodedText}`

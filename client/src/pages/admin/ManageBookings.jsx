@@ -228,7 +228,9 @@ export default function ManageBookings() {
                                       studioName: b.nama_studio,
                                       date: b.tanggal,
                                       startTime: b.jam_mulai?.substring(0, 5),
-                                      endTime: b.jam_selesai?.substring(0, 5)
+                                      endTime: b.jam_selesai?.substring(0, 5),
+                                      paymentStatus: b.status_payment,
+                                      paymentType: b.tipe_pembayaran || (b.metode ? 'lunas' : 'dp')
                                     });
                                   }
                                 }).catch(() => toast.error('Gagal mengambil info operator piket.'));
